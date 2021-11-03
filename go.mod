@@ -16,5 +16,8 @@ require (
 	go.temporal.io/sdk v1.11.0
 	go.temporal.io/server v1.9.1-0.20210513111455-82b05a2018e7
 	go.uber.org/zap v1.16.0
+	google.golang.org/grpc v1.40.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
+
+replace go.temporal.io/sdk => github.com/cretz/sdk-go v1.10.1-0.20211102213417-12f957be0b56

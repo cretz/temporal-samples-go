@@ -9,17 +9,19 @@ import (
 	"github.com/uber-go/tally/v4/prometheus"
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
+	"google.golang.org/grpc"
 
 	"github.com/temporalio/samples-go/metrics"
 )
 
 func main() {
 	// The client and worker are heavyweight objects that should be created once per process.
+	scope := newPrometheusScope(prometheus.Configuration{ListenAddress: "0.0.0.0:9090", TimerType: "histogram"})
 	c, err := client.NewClient(client.Options{
-		MetricsScope: newPrometheusScope(prometheus.Configuration{
-			ListenAddress: "0.0.0.0:9090",
-			TimerType:     "histogram",
-		}),
+		MetricsScope: scope,
+		ConnectionOptions: client.ConnectionOptions{
+			AdditionalDialOptions: []grpc.DialOption{grpc.WithStatsHandler(metrics.NewGRPCStatsHandler(scope))},
+		},
 	})
 	if err != nil {
 		log.Fatalln("Unable to create client", err)
